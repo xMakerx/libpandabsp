@@ -34,7 +34,10 @@ public:
 		return _entnum;
 	}
 
-	void init( entid_t entnum );
+	virtual void init( entid_t entnum );
+	virtual void precache();
+	virtual void spawn();
+	virtual void despawn();
 
 	INLINE int get_owner_client_id() const
 	{

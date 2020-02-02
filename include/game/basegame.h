@@ -18,6 +18,8 @@ public:
 		return _server;
 	}
 
+	virtual void load_bsp_level( const Filename &path, bool is_transition = false );
+
 	virtual bool startup();
 	virtual void setup_bsp();
 	virtual void do_frame();

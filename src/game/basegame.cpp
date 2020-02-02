@@ -1,4 +1,5 @@
 #include "game/basegame.h"
+#include "net/messages.h"
 
 #include <configVariableDouble.h>
 
@@ -8,6 +9,16 @@ BaseGame::BaseGame() :
 	BaseGameShared(),
 	_server( new Server )
 {
+}
+
+void BaseGame::load_bsp_level( const Filename &path, bool is_transition )
+{
+	Datagram dg = BeginMessage( NETMSG_CHANGE_LEVEL );
+	dg.add_string( path.get_basename_wo_extension() );
+	dg.add_uint8( (int)is_transition );
+	_server->broadcast_datagram( dg );
+
+	BaseGameShared::load_bsp_level( path, is_transition );
 }
 
 void BaseGame::setup_bsp()

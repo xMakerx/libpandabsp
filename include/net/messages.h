@@ -2,6 +2,13 @@
 
 #include <netDatagram.h>
 
+enum
+{
+	CLIENTSTATE_NONE,
+	CLIENTSTATE_LOADING,
+	CLIENTSTATE_PLAYING,
+};
+
 INLINE NetDatagram BeginMessage( int msgtype )
 {
 	NetDatagram dg;
@@ -23,4 +30,6 @@ enum
 
 	NETMSG_CLIENT_STATE,
 	NETMSG_CHANGE_LEVEL,
+
+	NETMSG_DELETE_ENTITY,
 };

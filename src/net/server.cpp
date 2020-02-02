@@ -1,5 +1,6 @@
 #include "net/server.h"
 #include "net/messages.h"
+#include "game/basegame.h"
 
 #include <configVariableInt.h>
 #include <datagramIterator.h>
@@ -54,6 +55,11 @@ void Server::remove_entity( BaseEntity *ent )
 	std::cout << "removing entity " << ent << std::endl;
 	ent->despawn();
 	_entnum_alloc.free( ent->get_entnum() );
+
+	Datagram dg = BeginMessage( NETMSG_DELETE_ENTITY );
+	dg.add_uint32( ent->get_entnum() );
+	broadcast_datagram( dg, true );
+
 	_entlist.erase( _entlist.find( ent->get_entnum() ) );
 }
 
@@ -88,9 +94,10 @@ void Server::handle_client_hello( SteamNetConnectionStatusChangedCallback_t *inf
 
 	NetDatagram dg = BeginMessage( NETMSG_HELLO_RESP );
 	dg.add_uint16( cl->get_client_id() );
+	dg.add_string( g_game->_map );
 	send_datagram( dg, cl->get_connection() );
 
-	update_client_state( cl, CLIENTSTATE_PLAYING );
+	update_client_state( cl, CLIENTSTATE_NONE );
 }
 
 void Server::update_client_state( Client *cl, int state )

@@ -1,5 +1,6 @@
 #include "game/c_basegame.h"
 #include "game/physics_utils.h"
+#include "net/messages.h"
 
 #include "shader_generator.h"
 #include "shader_vertexlitgeneric.h"
@@ -33,8 +34,14 @@ C_BaseGame::C_BaseGame() :
 {
 }
 
+void C_BaseGame::cleanup_bsp_level()
+{
+}
+
 void C_BaseGame::load_bsp_level( const Filename &path, bool is_transition )
 {
+	_client->set_client_state( CLIENTSTATE_LOADING );
+
 	BaseGameShared::load_bsp_level( path, is_transition );
 	_bsp_loader->do_optimizations();
 	NodePathCollection props = _bsp_level.find_all_matches( "**/+BSPProp" );
@@ -42,6 +49,8 @@ void C_BaseGame::load_bsp_level( const Filename &path, bool is_transition )
 	{
 		create_and_attach_bullet_nodes( props[i] );
 	}
+
+	_client->set_client_state( CLIENTSTATE_PLAYING );
 }
 
 void C_BaseGame::adjust_window_aspect_ratio( float ratio )

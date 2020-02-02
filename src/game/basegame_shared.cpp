@@ -46,6 +46,7 @@ void BaseGameShared::cleanup_bsp_level()
 
 void BaseGameShared::load_bsp_level( const Filename &path, bool is_transition )
 {
+	_map = path.get_basename_wo_extension();
 	nassertv( _bsp_loader->read( path, is_transition ) );
 	_bsp_level = _bsp_loader->get_result();
 }

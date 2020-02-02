@@ -91,6 +91,8 @@ public:
 	CIntervalManager *_ival_mgr;
 	VirtualFileSystem *_vfs;
 	PT( BulletWorld ) _physics_world;
+
+	std::string _map;
 	
 	NodePath _render;
 	NodePath _hidden;

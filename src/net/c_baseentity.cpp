@@ -23,6 +23,18 @@ C_BaseEntity::C_BaseEntity() :
 {
 }
 
+void C_BaseEntity::precache()
+{
+}
+
+void C_BaseEntity::spawn()
+{
+}
+
+void C_BaseEntity::despawn()
+{
+}
+
 bool C_BaseEntity::is_owner() const
 {
 	return _owner_client_id == g_client->get_my_client_id();

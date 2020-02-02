@@ -34,11 +34,11 @@ public:
 		return _entnum;
 	}
 
-	void precache();
-	void spawn();
-	void despawn();
+	virtual void precache();
+	virtual void spawn();
+	virtual void despawn();
 
-	void init( entid_t entnum );
+	virtual void init( entid_t entnum );
 
 	void network_state_changed();
 	void network_state_changed( void *ptr );

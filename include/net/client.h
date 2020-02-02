@@ -8,13 +8,6 @@
 
 #include <steam/steamnetworkingsockets.h>
 
-enum
-{
-	CLIENTSTATE_NONE,
-	CLIENTSTATE_LOADING,
-	CLIENTSTATE_PLAYING,
-};
-
 class EXPCL_PANDABSP Client : public ReferenceCount
 {
 public:

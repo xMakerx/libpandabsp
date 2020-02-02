@@ -1,5 +1,6 @@
 #include "net/c_client.h"
 #include "net/messages.h"
+#include "game/basegame_shared.h"
 
 #include <datagramIterator.h>
 #include <clockObject.h>
@@ -11,7 +12,8 @@ static ConfigVariableDouble cl_heartbeat_rate( "cl_heartbeat_rate", 1.0 );
 
 C_Client::C_Client() :
 	_connection( k_HSteamNetConnection_Invalid ),
-	_connected( false )
+	_connected( false ),
+	_client_state( CLIENTSTATE_NONE )
 {
 	g_client = this;
 
@@ -60,6 +62,22 @@ void C_Client::connect( const NetAddress &addr )
 void C_Client::connect_success( DatagramIterator &dgi )
 {
 	_my_client_id = dgi.get_uint16();
+	std::string mapname = dgi.get_string();
+	g_game->load_bsp_level( "maps/" + mapname );
+}
+
+void C_Client::set_client_state( int state )
+{
+	_client_state = state;
+	Datagram dg = BeginMessage( NETMSG_CLIENT_STATE );
+	dg.add_uint8( _client_state );
+	send_datagram( dg );
+}
+
+void C_Client::send_datagram( Datagram &dg )
+{
+	SteamNetworkingSockets()->SendMessageToConnection( _connection, dg.get_data(), dg.get_length(),
+							   k_nSteamNetworkingSend_Reliable, nullptr );
 }
 
 void C_Client::handle_datagram( const Datagram &dg )
@@ -78,6 +96,19 @@ void C_Client::handle_datagram( const Datagram &dg )
 	case NETMSG_SERVER_HEARTBEAT:
 		// todo
 		break;
+	case NETMSG_DELETE_ENTITY:
+	{
+		entid_t entnum = dgi.get_uint32();
+		remove_entity( entnum );
+		break;
+	}
+	case NETMSG_CHANGE_LEVEL:
+	{
+		std::string mapname = dgi.get_string();
+		bool is_transition = (bool)dgi.get_uint8();
+		g_game->load_bsp_level( "maps/" + mapname, is_transition );
+		break;
+	}
 	}
 }
 
@@ -103,6 +134,16 @@ void C_Client::tick()
 		read_incoming_messages();
 		SteamNetworkingSockets()->RunCallbacks( this );
 	}
+}
+
+void C_Client::remove_entity( entid_t entnum )
+{
+	C_BaseEntity *ent = find_entity_by_id( entnum );
+	if ( !ent )
+		return;
+
+	ent->despawn();
+	_entlist.erase( std::find( _entlist.begin(), _entlist.end(), ent ) );
 }
 
 C_BaseEntity *C_Client::find_entity_by_id( entid_t entnum ) const

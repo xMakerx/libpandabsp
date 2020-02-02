@@ -15,6 +15,11 @@ public:
 	void receive_snapshot( DatagramIterator &dgi );
 
 	C_BaseEntity *find_entity_by_id( entid_t entnum ) const;
+	void remove_entity( entid_t entnum );
+
+	void set_client_state( int state );
+
+	void send_datagram( Datagram &dg );
 
 	void connect( const NetAddress &addr );
 
@@ -44,6 +49,8 @@ private:
 	int _my_client_id;
 
 	bool _connected;
+
+	int _client_state;
 };
 
 extern EXPCL_PANDABSP C_Client *g_client;
