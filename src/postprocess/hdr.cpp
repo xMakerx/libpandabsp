@@ -58,7 +58,7 @@ private:
 	HDRPass *_pass;
 };
 
-TypeDef( HDRPass );
+IMPLEMENT_CLASS( HDRPass );
 
 HDRPass::HDRPass( PostProcess *pp ) :
 	PostProcessPass( pp, "hdr", bits_PASSTEXTURE_COLOR ),

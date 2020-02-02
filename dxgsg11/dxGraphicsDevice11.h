@@ -11,7 +11,7 @@ class wdxGraphicsPipe11;
 
 class DXGraphicsDevice11 : public GraphicsDevice
 {
-	TypeDecl( DXGraphicsDevice11, GraphicsDevice );
+	DECLARE_CLASS( DXGraphicsDevice11, GraphicsDevice );
 
 public:
 	DXGraphicsDevice11( wdxGraphicsPipe11 *pipe );

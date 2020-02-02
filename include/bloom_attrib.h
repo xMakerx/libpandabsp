@@ -18,7 +18,7 @@
 
 class BloomAttrib : public RenderAttrib
 {
-	AttribDecl( BloomAttrib, RenderAttrib );
+	DECLARE_ATTRIB( BloomAttrib, RenderAttrib );
 
 private:
 	INLINE BloomAttrib() :

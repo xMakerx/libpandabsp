@@ -25,10 +25,10 @@ entitydef_t::~entitydef_t()
 {
 }
 
-TypeDef( CBaseEntity );
-TypeDef( CPointEntity );
-TypeDef( CBrushEntity );
-TypeDef( CBoundsEntity );
+IMPLEMENT_CLASS( CBaseEntity );
+IMPLEMENT_CLASS( CPointEntity );
+IMPLEMENT_CLASS( CBrushEntity );
+IMPLEMENT_CLASS( CBoundsEntity );
 
 ///////////////////////////////////// CBaseEntity //////////////////////////////////////////
 

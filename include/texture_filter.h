@@ -8,7 +8,7 @@
  */
 class BSPTextureFilter : public TexturePoolFilter
 {
-	TypeDecl( BSPTextureFilter, TexturePoolFilter );
+	DECLARE_CLASS( BSPTextureFilter, TexturePoolFilter );
 public:
 	virtual PT( Texture ) post_load( Texture *tex );
 };

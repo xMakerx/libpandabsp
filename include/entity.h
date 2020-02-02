@@ -49,7 +49,7 @@ struct entitydef_t
 
 class EXPCL_PANDABSP CBaseEntity : public TypedReferenceCount
 {
-        TypeDecl( CBaseEntity, TypedReferenceCount );
+        DECLARE_CLASS( CBaseEntity, TypedReferenceCount );
 
 PUBLISHED:
 	CBaseEntity();
@@ -100,7 +100,7 @@ protected:
 
 class EXPCL_PANDABSP CPointEntity : public CBaseEntity
 {
-        TypeDecl( CPointEntity, CBaseEntity );
+        DECLARE_CLASS( CPointEntity, CBaseEntity );
 
 PUBLISHED:
 	CPointEntity();
@@ -122,7 +122,7 @@ private:
  */
 class EXPCL_PANDABSP CBoundsEntity : public CBaseEntity
 {
-        TypeDecl( CBoundsEntity, CBaseEntity );
+        DECLARE_CLASS( CBoundsEntity, CBaseEntity );
 
 PUBLISHED:
         CBoundsEntity();
@@ -142,7 +142,7 @@ private:
 
 class EXPCL_PANDABSP CBrushEntity : public CBaseEntity
 {
-        TypeDecl( CBrushEntity, CBaseEntity );
+        DECLARE_CLASS( CBrushEntity, CBaseEntity );
 
 PUBLISHED:
 	CBrushEntity();

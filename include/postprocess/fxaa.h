@@ -19,7 +19,7 @@ class PostProcess;
 
 class FXAA_Effect : public PostProcessEffect
 {
-	TypeDecl( FXAA_Effect, PostProcessEffect );
+	DECLARE_CLASS( FXAA_Effect, PostProcessEffect );
 
 PUBLISHED:
 	FXAA_Effect( PostProcess *pp );

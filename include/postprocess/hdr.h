@@ -35,7 +35,7 @@ static const int HDR_NUM_BUCKETS = 16;
 
 class HDRPass : public PostProcessPass
 {
-	TypeDecl( HDRPass, PostProcessPass );
+	DECLARE_CLASS( HDRPass, PostProcessPass );
 
 PUBLISHED:
 	HDRPass( PostProcess *pp );

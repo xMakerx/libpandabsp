@@ -372,8 +372,6 @@ PUBLISHED:
 
 	LTexCoord get_lightcoords( int facenum, const LVector3 &point );
 
-	void update();
-
         static BSPLoader *get_global_ptr();
 
 PUBLISHED:
@@ -425,6 +423,8 @@ public:
 
 		return nullptr;
 	}
+
+	void update_visibility( const LPoint3 &pos );
 
 private:
 	void setup_raytrace_environment();

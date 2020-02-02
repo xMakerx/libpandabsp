@@ -78,7 +78,7 @@ struct light_t : public ReferenceCount
 #ifndef CPPPARSER
 class nodeshaderinput_t : public TypedReferenceCount
 {
-        TypeDecl( nodeshaderinput_t, TypedReferenceCount );
+        DECLARE_CLASS( nodeshaderinput_t, TypedReferenceCount );
 
 public:
         // This is the ambient cube actually used by the shader

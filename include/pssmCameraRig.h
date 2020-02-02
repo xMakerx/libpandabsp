@@ -72,7 +72,7 @@ PUBLISHED:
         void set_logarithmic_factor( float factor );
         void set_border_bias( float bias );
 
-        void update( NodePath cam_node, const LVecBase3 &light_vector, const GeometricBoundingVolume *light_bounds );
+        void update( NodePath cam_node, const LVecBase3 &light_vector );
         void reset_film_size_cache();
 
         NodePath get_camera( size_t index );
@@ -96,8 +96,7 @@ public:
 protected:
         void init_cam_nodes();
         void compute_pssm_splits( const LMatrix4& transform, float max_distance,
-                                  const LVecBase3 &light_vector, Camera *main_cam,
-                                  const GeometricBoundingVolume *light_bounds );
+                                  const LVecBase3 &light_vector, Camera *main_cam );
 
         inline float get_split_start( size_t split_index );
         LMatrix4 compute_mvp( size_t cam_index );
@@ -119,6 +118,7 @@ protected:
         float _border_bias;
         bool _use_fixed_film_size;
         bool _use_stable_csm;
+	bool _is_setup;
         size_t _resolution;
         size_t _num_splits;
         NodePath _parent;

@@ -498,6 +498,18 @@ void BSPLoader::make_brush_model_collisions( int explicit_modelnum )
 			auto modelnum = mitr->first;
 			auto faces = mitr->second;
 
+			LMatrix4 world_to_model;
+			if ( explicit_modelnum != -1 )
+			{
+				LPoint3 model_origin = get_model_origin( modelnum );
+				CPT( TransformState ) ts = TransformState::make_pos( model_origin )->get_inverse();
+				world_to_model = ts->get_mat();
+			}
+			else
+			{
+				world_to_model = LMatrix4::ident_mat();
+			}
+
 			for ( size_t j = 0; j < faces.size(); j++ )
 			{
 				int facenum = faces[j];
@@ -512,9 +524,10 @@ void BSPLoader::make_brush_model_collisions( int explicit_modelnum )
 				int ntris = face->numedges - 2;
 				for ( int tri = 0; tri < ntris; tri++ )
 				{
-					mesh->add_triangle( VertCoord( _bspdata, face, 0 ) / 16.0f,
-							    VertCoord( _bspdata, face, ( tri + 1 ) % face->numedges ) / 16.0f,
-							    VertCoord( _bspdata, face, ( tri + 2 ) % face->numedges ) / 16.0f );
+					mesh->add_triangle(
+						world_to_model.xform_point( VertCoord( _bspdata, face, 0 ) / 16.0f ),
+						world_to_model.xform_point( VertCoord( _bspdata, face, ( tri + 1 ) % face->numedges ) / 16.0f ),
+						world_to_model.xform_point( VertCoord( _bspdata, face, ( tri + 2 ) % face->numedges ) / 16.0f ) );
 					brush_collision_data_t bcdata;
 					bcdata.modelnum = modelnum;
 					bcdata.material = surfaceprop;
@@ -533,7 +546,7 @@ void BSPLoader::make_brush_model_collisions( int explicit_modelnum )
 		rbnode->add_shape( shape );
 		rbnode->set_kinematic( explicit_modelnum != -1 ); // non-static brush models are kinematic
 		NodePath rbnodenp = NodePath( rbnode );
-		rbnodenp.wrt_reparent_to( get_model( explicit_modelnum != -1 ? explicit_modelnum : 0 ) );
+		rbnodenp.reparent_to( get_model( explicit_modelnum != -1 ? explicit_modelnum : 0 ) );
 		if ( type == BSPFaceAttrib::FACETYPE_FLOOR )
 		{
 			rbnodenp.set_collide_mask( BitMask32::bit( 2 ) );
@@ -1723,11 +1736,15 @@ void BSPLoader::update_leaf( int leaf )
 	}
 }
 
-void BSPLoader::update()
+void BSPLoader::update_visibility( const LPoint3 &pos )
 {
         // Update visibility
+	// Should be called from cull thread.
 
-        int curr_leaf_idx = find_leaf( _camera.get_pos( _render ) );
+	if ( !_want_visibility )
+		return;
+
+        int curr_leaf_idx = find_leaf( pos );
         if ( curr_leaf_idx != _curr_leaf_idx )
         {
 		update_leaf( curr_leaf_idx );
@@ -1737,10 +1754,12 @@ void BSPLoader::update()
 AsyncTask::DoneStatus BSPLoader::update_task( GenericAsyncTask *task, void *data )
 {
         BSPLoader *self = (BSPLoader *)data;
-        if ( self->_want_visibility )
-        {
-                self->update();
-        }
+
+	// We update visibility on the Cull thread now.
+        //if ( self->_want_visibility )
+        //{
+        //        self->update_visibility();
+        //}
 
         return AsyncTask::DS_cont;
 }
@@ -1830,10 +1849,6 @@ bool BSPLoader::read( const Filename &file, bool is_transition )
                 // Hammer units are tiny compared to panda.
                 _result.set_scale( HAMMER_TO_PANDA );
         }
-        
-        _has_pvs_data = false;
-
-        _leaf_pvs.resize( MAX_MAP_LEAFS );
 
         VirtualFileSystem *vfs = VirtualFileSystem::get_global_ptr();
 
@@ -1853,6 +1868,8 @@ bool BSPLoader::read( const Filename &file, bool is_transition )
         ParseEntities( _bspdata );
 
         _leaf_aabb_lock.acquire();
+	_leaf_pvs.resize( MAX_MAP_LEAFS );
+	_has_pvs_data = false;
         _leaf_bboxs.resize( MAX_MAP_LEAFS );
         // Decompress the per leaf visibility data.
         for ( int i = 0; i < _bspdata->dmodels[0].visleafs + 1; i++ )
@@ -1893,30 +1910,10 @@ bool BSPLoader::read( const Filename &file, bool is_transition )
 
 		_decal_mgr.init();
         }
-        else
-        {
-                make_faces_ai();
-        }
-
-	for ( int entnum = 0; entnum < _bspdata->numentities; entnum++ )
+	else
 	{
-		entity_t *ent = _bspdata->entities + entnum;
-		std::string classname = ValueForKey( ent, "classname" );
-		if ( std::find( world_entities.begin(), world_entities.end(), classname ) != world_entities.end() )
-			continue;
-
-		int modelnum = extract_modelnum_s( ent );
-		if ( modelnum == -1 )
-			continue;
-
-		std::cout << "Making non-static collisions for model " << modelnum << " entity " << entnum << std::endl;
-		// Make collisions for a non-static brush model.
-		make_brush_model_collisions( modelnum );
+		make_faces_ai();
 	}
-	// This makes collisions for static brush models (func_wall, func_detail, worldspawn, etc),
-	// but combines all the meshes into one collision node for optimization purposes.
-	std::cout << "Making static collisions" << std::endl;
-	make_brush_model_collisions( -1 );
 
         load_entities();
 
@@ -2135,6 +2132,7 @@ void BSPLoader::do_optimizations()
                         {
                                 NodePath child = children[j];
                                 child.wrt_reparent_to( mdlroot );
+				child.flatten_strong();
                         }
                         
 			mdata.decal_rbc->clear_transform();
@@ -2169,6 +2167,8 @@ void BSPLoader::do_optimizations()
         // ( concatenation of Geoms in that leaf + Geoms of leafs in PVS )
         _leaf_world_geoms.clear();
         _leaf_world_geoms.resize( numvisleafs + 1 );
+
+	_leaf_aabb_lock.acquire();
 
         for ( int leafnum = 1; leafnum < numvisleafs; leafnum++ )
         {
@@ -2210,8 +2210,30 @@ void BSPLoader::do_optimizations()
 		_leaf_world_geoms[leafnum] = lgn->get_geoms();
         }
 
-        _result.premunge_scene( _win->get_gsg() );
-        _result.prepare_scene( _win->get_gsg() );
+	_leaf_aabb_lock.release();
+
+	for ( int entnum = 0; entnum < _bspdata->numentities; entnum++ )
+	{
+		entity_t *ent = _bspdata->entities + entnum;
+		std::string classname = ValueForKey( ent, "classname" );
+		if ( std::find( world_entities.begin(), world_entities.end(), classname ) != world_entities.end() )
+			continue;
+
+		int modelnum = extract_modelnum_s( ent );
+		if ( modelnum == -1 )
+			continue;
+
+		std::cout << "Making non-static collisions for model " << modelnum << " entity " << entnum << std::endl;
+		// Make collisions for a non-static brush model.
+		make_brush_model_collisions( modelnum );
+	}
+	// This makes collisions for static brush models (func_wall, func_detail, worldspawn, etc),
+	// but combines all the meshes into one collision node for optimization purposes.
+	std::cout << "Making static collisions" << std::endl;
+	make_brush_model_collisions( -1 );
+
+        //_result.premunge_scene( _win->get_gsg() );
+        //_result.prepare_scene( _win->get_gsg() );
 }
 
 void BSPLoader::set_materials_file( const Filename &file )
@@ -2441,9 +2463,8 @@ void BSPLoader::cleanup( bool is_transition )
 
         _materials.clear();
 
-        _leaf_pvs.clear();
-
         _leaf_aabb_lock.acquire();
+	_leaf_pvs.clear();
         _leaf_world_geoms.clear();
         _visible_leafs.clear();
         _leaf_bboxs.clear();

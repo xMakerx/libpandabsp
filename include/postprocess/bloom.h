@@ -19,7 +19,7 @@ class PostProcess;
 
 class BloomEffect : public PostProcessEffect
 {
-	TypeDecl( BloomEffect, PostProcessEffect );
+	DECLARE_CLASS( BloomEffect, PostProcessEffect );
 
 PUBLISHED:
 	BloomEffect( PostProcess *pp );

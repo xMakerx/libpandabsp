@@ -18,7 +18,7 @@
 
 class LightingOriginEffect : public RenderEffect
 {
-	TypeDecl( LightingOriginEffect, RenderEffect );
+	DECLARE_CLASS( LightingOriginEffect, RenderEffect );
 
 private:
 	INLINE LightingOriginEffect() :

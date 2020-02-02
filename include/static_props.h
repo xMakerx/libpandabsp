@@ -16,7 +16,7 @@
 
 class StaticPropAttrib : RenderAttrib
 {
-	AttribDecl( StaticPropAttrib, RenderAttrib );
+	DECLARE_ATTRIB( StaticPropAttrib, RenderAttrib );
 
 private:
 	INLINE StaticPropAttrib() :

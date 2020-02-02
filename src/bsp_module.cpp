@@ -17,7 +17,7 @@ extern "C" EXPORT_CLASS void initbsp();
 #if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef py_bsp_module = {
   PyModuleDef_HEAD_INIT,
-  "bsp",
+  "panda3d.bsp",
   nullptr,
   -1,
   nullptr,

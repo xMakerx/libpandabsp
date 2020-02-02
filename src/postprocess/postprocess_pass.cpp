@@ -20,7 +20,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // PostProcessPass
 
-TypeDef( PostProcessPass );
+IMPLEMENT_CLASS( PostProcessPass );
 
 FrameBufferProperties *PostProcessPass::_default_fbprops = nullptr;
 FrameBufferProperties PostProcessPass::get_default_fbprops()

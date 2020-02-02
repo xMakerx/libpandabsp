@@ -1,0 +1,17 @@
+Client Class/View
+    Class ID
+    RecvTable
+        RecvProp
+        RecvProp
+        RecvProp
+        ...
+        
+______________________________________
+
+Server Class/View
+    Class ID
+    SendTable
+        SendProp
+        SendProp
+        SendProp
+        ...
