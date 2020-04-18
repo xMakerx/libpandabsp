@@ -10,6 +10,11 @@
  */
 
 #include "config_bsp.h"
+
+#ifdef _PYTHON_VERSION
+#include "entity.h"
+#endif
+
 #include "bsploader.h"
 #include "bsp_render.h"
 #include "shader_generator.h"
@@ -65,6 +70,13 @@ void init_libpandabsp()
                 return;
         initialized = true;
 
+#ifdef _PYTHON_VERSION
+        CBaseEntity::init_type();
+        CPointEntity::init_type();
+        CBoundsEntity::init_type();
+        CBrushEntity::init_type();
+#endif
+
 	BSPFaceAttrib::init_type();
         BSPRender::init_type();
         BSPCullTraverser::init_type();
@@ -75,7 +87,7 @@ void init_libpandabsp()
 	GlowNode::init_type();
 
         AmbientBoostEffect::init_type();
-        AmbientBoostEffect::RegisterWithReadFactory();
+        AmbientBoostEffect::register_with_read_factory();
 
         BSPMaterial::init_type();
         BSPMaterialAttrib::init_type();

@@ -17,10 +17,10 @@ target_compile_definitions(vifparser PRIVATE BUILDING_VIFPARSER)
 target_include_directories(vifparser PRIVATE ./ ${INCPANDA})
 target_link_directories(vifparser PRIVATE ${LIBPANDA})
 
-bsp_setup_target(vifparser)
+bsp_setup_target_dll(vifparser)
 
 target_link_libraries(vifparser
-					  libpanda.lib
-					  libpandaexpress.lib
-					  libp3dtool.lib
-					  libp3dtoolconfig.lib)
+					 LINK_PRIVATE libpanda.lib
+					 LINK_PRIVATE libpandaexpress.lib
+					 LINK_PRIVATE libp3dtool.lib
+					 LINK_PRIVATE libp3dtoolconfig.lib)
