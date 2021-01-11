@@ -54,7 +54,7 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /DEBUG")
 #string(REPLACE "/DNDEBUG" "" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 #string(REPLACE "/DNDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 
-add_custom_command(TARGET libpandabsp PRE_BUILD COMMAND interrogate.bat)
+#add_custom_command(TARGET libpandabsp PRE_BUILD COMMAND interrogate.bat)
 
 if (DEFINED LINK_ALL_STATIC)
     add_custom_command(TARGET libpandabsp POST_BUILD COMMAND copy /Y ${CMAKE_BUILD_TYPE}\\${bsp_out}${bsp_suff} ${LIBPANDA_BACK}\\${bsp_out}${bsp_suff})
@@ -73,12 +73,11 @@ target_link_libraries(libpandabsp libpanda.lib
 						    libp3framework.lib
                             libpandaegg.lib
 							libp3interrogatedb.lib
-							interrogatedb.lib
-							core.lib
-							python27.lib
+							interrogatedb.cp39-win_amd64.lib
+							core.cp39-win_amd64.lib
+							python39.lib
                             embree3.lib
                             tbb.lib
-                            tbbmalloc.lib
 							libpandagl.lib
                             bsp_common
 							vifparser

@@ -65,6 +65,9 @@ void initbsp() {
 
 #ifdef HAVE_PYTHON
 
+#define _STRINGIFY_VERSION(a, b) (#a "." #b)
+#define STRINGIFY_VERSION(a, b) _STRINGIFY_VERSION(a, b)
+
 using std::string;
 
 /**
@@ -576,6 +579,8 @@ Dtool_TypeMap *Dtool_GetGlobalTypeMap() {
   }
 }
 
+#define PY_MAJOR_VERSION_STR #PY_MAJOR_VERSION "." #PY_MINOR_VERSION
+
 #if PY_MAJOR_VERSION >= 3
 PyObject *Dtool_PyModuleInitHelper(const LibraryDef *defs[], PyModuleDef *module_def) {
 #else
@@ -583,15 +588,18 @@ PyObject *Dtool_PyModuleInitHelper(const LibraryDef *defs[], const char *modulen
 #endif
   // Check the version so we can print a helpful error if it doesn't match.
   string version = Py_GetVersion();
+  size_t version_len = version.find('.', 2);
+  if (version_len != string::npos) {
+    version.resize(version_len);
+  }
 
-  if (version[0] != '0' + PY_MAJOR_VERSION ||
-      version[2] != '0' + PY_MINOR_VERSION) {
+  if (version != STRINGIFY_VERSION(PY_MAJOR_VERSION, PY_MINOR_VERSION)) {
     // Raise a helpful error message.  We can safely do this because the
     // signature and behavior for PyErr_SetString has remained consistent.
     std::ostringstream errs;
     errs << "this module was compiled for Python "
          << PY_MAJOR_VERSION << "." << PY_MINOR_VERSION << ", which is "
-         << "incompatible with Python " << version.substr(0, 3);
+         << "incompatible with Python " << version;
     string error = errs.str();
     PyErr_SetString(PyExc_ImportError, error.c_str());
     return nullptr;
@@ -802,7 +810,7 @@ PyObject *copy_from_make_copy(PyObject *self, PyObject *noargs) {
  */
 PyObject *copy_from_copy_constructor(PyObject *self, PyObject *noargs) {
   PyObject *callable = (PyObject *)Py_TYPE(self);
-  return _PyObject_FastCall(callable, &self, 1);
+  return PyObject_CallOneArg(callable, self);
 }
 
 /**
@@ -963,6 +971,24 @@ size_t PyLongOrInt_AsSize_t(PyObject *vv) {
 }
 #endif
 
+#if PY_VERSION_HEX < 0x03090000
+/**
+ * Most efficient way to call a function without any arguments.
+ */
+PyObject *PyObject_CallNoArgs(PyObject *func) {
+#if PY_VERSION_HEX >= 0x03080000
+  return _PyObject_Vectorcall(func, nullptr, 0, nullptr);
+#elif PY_VERSION_HEX >= 0x03070000
+  return _PyObject_FastCallDict(func, nullptr, 0, nullptr);
+#elif PY_VERSION_HEX >= 0x03060000
+  return _PyObject_FastCall(func, nullptr, 0);
+#else
+  static PyObject *empty_tuple = PyTuple_New(0);
+  return PyObject_Call(func, empty_tuple, nullptr);
+#endif
+}
+#endif
+
 #endif  // HAVE_PYTHON
 #line 1 "dtool/src/interrogatedb/py_wrappers.cxx"
 /**
@@ -997,7 +1023,7 @@ static void _register_collection(PyTypeObject *type, const char *abc) {
 #endif
         PyObject *sequence = PyDict_GetItemString(dict, abc);
         if (sequence != nullptr) {
-          if (PyObject_CallMethodObjArgs(sequence, register_str, (PyObject *)type, nullptr) == nullptr) {
+          if (PyObject_CallMethodOneArg(sequence, register_str, (PyObject *)type) == nullptr) {
             PyErr_Print();
           }
         }

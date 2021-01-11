@@ -4,7 +4,7 @@ project(libpandabsp)
 
 # Setup paths to dependencies
 
-set(PANDA C:/Users/brian/OneDrive/Documents/Projects/cio-panda3d/built_x64 CACHE PATH "Path to root Panda3D SDK directory.")
+set(PANDA C:/Users/maver/Documents/OpenCIO/opencio-panda3d/built_x64 CACHE PATH "Path to root Panda3D SDK directory.")
 string(REGEX REPLACE "/" "\\\\" PANDA_BACK ${PANDA})
 set(LIBPANDA ${PANDA}/lib)
 set(LIBPANDA_BACK ${PANDA_BACK}\\lib)
@@ -14,11 +14,11 @@ set(BINPANDA_BACK ${PANDA_BACK}\\bin)
 set(LIBPANDA_PY ${PANDA}/python/libs)
 set(INCPANDA_PY ${PANDA}/python/include)
 
-set(EMBREE C:/Users/brian/OneDrive/Documents/Projects/embree-3.5.0.x64.vc14.windows CACHE PATH "Path to root Embree SDK directory.")
+set(EMBREE C:/Users/maver/Documents/OpenCIO/opencio-panda3d/libpandabsp/embree-3.12.1.x64.vc14.windows CACHE PATH "Path to root Embree SDK directory.")
 set(INCEMBREE ${EMBREE}/include)
 set(LIBEMBREE ${EMBREE}/lib)
 
-set(BULLET C:/Users/brian/OneDrive/Documents/Projects/cio-panda3d/thirdparty/win-libs-vc14-x64/bullet CACHE PATH "Path to thirdparty Bullet directory.")
+set(BULLET C:/Users/maver/Documents/OpenCIO/opencio-panda3d/thirdparty/win-libs-vc14-x64/bullet CACHE PATH "Path to thirdparty Bullet directory.")
 set(INCBULLET ${BULLET}/include)
 set(LIBBULLET ${BULLET}/lib)
 
@@ -64,7 +64,7 @@ endmacro()
 add_subdirectory(tools/keyvalue-parser)
 add_subdirectory(tools/common)
 add_subdirectory(libpandabsp)
-add_subdirectory(networksystem)
+#add_subdirectory(networksystem)
 
 #add_subdirectory(tools/p3csg)
 #add_subdirectory(tools/p3bsp)

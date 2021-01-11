@@ -1,6 +1,6 @@
 
 REM Make sure this is set to the correct directory on your machine!
-set PANDA_DIR=..\..\..\cio-panda3d\built_x64
+set PANDA_DIR=%OPENCIOENGINE%
 
 set INTERROGATE=%PANDA_DIR%\bin\interrogate
 set INTERROGATE_MODULE=%PANDA_DIR%\bin\interrogate_module

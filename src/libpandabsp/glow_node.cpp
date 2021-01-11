@@ -156,7 +156,7 @@ void GlowNode::draw_callback( CallbackData *data )
 		gsg->set_state_and_transform( _occlusion_query_point_state, obj->_internal_transform );
 
 	        gsg->begin_occlusion_query();
-		munged_geom->draw( gsg, munged_data, true, Thread::get_current_thread() );
+		munged_geom->draw( gsg, munged_data, 1, true, Thread::get_current_thread() );
 		_ctx = gsg->end_occlusion_query();
 	}
 

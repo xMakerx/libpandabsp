@@ -2765,8 +2765,8 @@ void BSPLoader::get_entity_keyvalues( PyObject *list, const int entnum )
         for ( epair_t *ep = ent->epairs; ep->next != nullptr; ep = ep->next )
         {
                 PyObject *kv = PyTuple_New( 2 );
-                PyTuple_SetItem( kv, 0, PyString_FromString( ep->key ) );
-                PyTuple_SetItem( kv, 1, PyString_FromString( ep->value ) );
+                PyTuple_SetItem( kv, 0, PyUnicode_FromString( ep->key ) );
+                PyTuple_SetItem( kv, 1, PyUnicode_FromString( ep->value ) );
                 PyList_Append( list, kv );
         }
 }
