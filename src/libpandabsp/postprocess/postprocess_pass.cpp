@@ -234,7 +234,7 @@ void PostProcessPass::setup_region()
 void PostProcessPass::setup()
 {
 	setup_textures();
-	nassertv( setup_buffer() );
+	if (!setup_buffer()) return;
 	setup_quad();
 	setup_camera();
 	setup_region();

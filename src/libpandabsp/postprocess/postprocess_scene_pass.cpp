@@ -93,7 +93,9 @@ void PostProcessScenePass::setup_scene_camera( int i )
 	DCAST( Camera, info->camera.node() )->set_initial_state( _cam_state );
 	info->state = _cam_state;
 
-	PT( DisplayRegion ) dr = _buffer->make_display_region();
+  // (added this line on 1/12/21, hopefully this fixes issues)
+  PT(DisplayRegion) dr = _buffer->make_stereo_display_region(0.0f, 1.0f, 0.0f, 1.0f);
+	//PT( DisplayRegion ) dr = _buffer->make_display_region();
 	dr->disable_clears();
 	_pp->set_clears( i, dr );
 	dr->set_camera( _pp->get_camera( i ) );

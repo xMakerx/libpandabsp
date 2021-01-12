@@ -13,7 +13,7 @@ endif()
 
 # Setup paths to dependencies
 
-set(PANDA C:/Users/brian/OneDrive/Documents/Projects/cio-panda3d/built_x64 CACHE PATH "Path to root Panda3D SDK directory.")
+set(PANDA $ENV{OPENCIOENGINE} CACHE PATH "Path to root Panda3D SDK directory.")
 string(REGEX REPLACE "/" "\\\\" PANDA_BACK ${PANDA})
 set(LIBPANDA ${PANDA}/lib)
 set(LIBPANDA_BACK ${PANDA_BACK}\\lib)
@@ -23,11 +23,11 @@ set(BINPANDA_BACK ${PANDA_BACK}\\bin)
 set(LIBPANDA_PY ${PANDA}/python/libs)
 set(INCPANDA_PY ${PANDA}/python/include)
 
-set(EMBREE C:/Users/brian/OneDrive/Documents/Projects/embree-3.5.0.x64.vc14.windows CACHE PATH "Path to root Embree SDK directory.")
+set(EMBREE $ENV{OPENCIOENGINE}/../embree-3.12.1.x64.vc14.windows CACHE PATH "Path to root Embree SDK directory.")
 set(INCEMBREE ${EMBREE}/include)
 set(LIBEMBREE ${EMBREE}/lib)
 
-set(BULLET C:/Users/brian/OneDrive/Documents/Projects/cio-panda3d/thirdparty/win-libs-vc14-x64/bullet CACHE PATH "Path to thirdparty Bullet directory.")
+set(BULLET $ENV{OPENCIOENGINE}/../thirdparty/win-libs-vc14-x64/bullet CACHE PATH "Path to thirdparty Bullet directory.")
 set(INCBULLET ${BULLET}/include)
 set(LIBBULLET ${BULLET}/lib)
 
@@ -37,7 +37,7 @@ set(LIBGNS C:/Users/brian/OneDrive/Documents/Projects/libpandabsp/src/dependenci
 set(CMAKE_INSTALL_PREFIX ${PANDA})
 
 if (IS_GAME_BUILD)
-	set(INCFREETYPE C:/Users/brian/OneDrive/Documents/Projects/cio-panda3d/thirdparty/win-libs-vc14-x64/freetype/include/freetype2 CACHE PATH "Path to thirdparty FreeType include directory.")
+	set(INCFREETYPE $ENV{OPENCIOENGINE}/../thirdparty/win-libs-vc14-x64/freetype/include/freetype2 CACHE PATH "Path to thirdparty FreeType include directory.")
 endif()
 
 add_compile_definitions(WITHIN_PANDA)
@@ -92,12 +92,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd4275")
 
 add_subdirectory(tools/keyvalue-parser)
 add_subdirectory(tools/common)
-add_subdirectory(bphysics)
+#add_subdirectory(bphysics)
 add_subdirectory(libpandabsp)
-
-if (PYTHON_VERSION)
-	add_subdirectory(networksystem)
-endif()
 
 if (IS_GAME_BUILD)
 	add_subdirectory(game/server)

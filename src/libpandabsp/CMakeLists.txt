@@ -68,7 +68,7 @@ if (NOT SET_NDEBUG)
 endif()
 
 if (PYTHON_VERSION)
-    add_custom_command(TARGET libpandabsp PRE_BUILD COMMAND interrogate.bat)
+    #add_custom_command(TARGET libpandabsp PRE_BUILD COMMAND interrogate.bat)
 endif()
 
 if (DEFINED LINK_ALL_STATIC)
@@ -86,14 +86,13 @@ target_link_libraries(libpandabsp LINK_PRIVATE libpanda.lib
                             LINK_PRIVATE libpandaegg.lib
                             LINK_PRIVATE embree3.lib
                             LINK_PRIVATE tbb.lib
-                            LINK_PRIVATE tbbmalloc.lib
 							LINK_PRIVATE libpandagl.lib
                             LINK_PRIVATE bsp_common
 							LINK_PRIVATE vifparser
 							LINK_PRIVATE libpandabullet.lib)
 							
 if (PYTHON_VERSION)
-	target_link_libraries(libpandabsp LINK_PRIVATE libp3interrogatedb.lib LINK_PRIVATE python27.lib)
+	target_link_libraries(libpandabsp LINK_PRIVATE libp3interrogatedb.lib LINK_PRIVATE python39.lib)
 endif()
                             
 add_dependencies(libpandabsp vifparser bsp_common)
